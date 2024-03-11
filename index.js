@@ -30,6 +30,20 @@ async function run() {
     const itemsCollection = client.db("cosmoSchoolDB").collection("items");
     const usersCollection = client.db("cosmoSchoolDB").collection("users");
 
+    app.post("/itemAdd", async (req, res) => {
+      const content = req.body;
+      content.createdAt = new Date();
+      const result = await itemsCollection.insertOne(content);
+      res.send(result);
+    });
+
+    app.post("/employeeAdd", async (req, res) => {
+      const content = req.body;
+      content.createdAt = new Date();
+      const result = await usersCollection.insertOne(content);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
