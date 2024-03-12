@@ -39,6 +39,16 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/addItem/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await itemsCollection
+        .find(query)
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
+
     app.post("/addEmployee", async (req, res) => {
       const content = req.body;
       content.createdAt = new Date();
