@@ -28,19 +28,21 @@ async function run() {
     await client.connect();
 
     const itemsCollection = client.db("cosmoSchoolDB").collection("items");
-    const usersCollection = client.db("cosmoSchoolDB").collection("users");
+    const employeesCollection = client
+      .db("cosmoSchoolDB")
+      .collection("employees");
 
-    app.post("/itemAdd", async (req, res) => {
+    app.post("/addItem", async (req, res) => {
       const content = req.body;
       content.createdAt = new Date();
       const result = await itemsCollection.insertOne(content);
       res.send(result);
     });
 
-    app.post("/employeeAdd", async (req, res) => {
+    app.post("/addEmployee", async (req, res) => {
       const content = req.body;
       content.createdAt = new Date();
-      const result = await usersCollection.insertOne(content);
+      const result = await employeesCollection.insertOne(content);
       res.send(result);
     });
 
