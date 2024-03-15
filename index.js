@@ -28,9 +28,16 @@ async function run() {
     await client.connect();
 
     const itemsCollection = client.db("cosmoSchoolDB").collection("items");
+
     const employeesCollection = client
       .db("cosmoSchoolDB")
       .collection("employees");
+
+    const purchasesCollection = client
+      .db("cosmoSchoolDB")
+      .collection("purchases");
+
+    const storeCollection = client.db("cosmoSchoolDB").collection("store");
 
     app.post("/addItem", async (req, res) => {
       const content = req.body;
@@ -67,6 +74,56 @@ async function run() {
       const content = req.body;
       content.createdAt = new Date();
       const result = await employeesCollection.insertOne(content);
+      res.send(result);
+    });
+
+    // post purchase data and update store collection
+    app.post("/purchase", async (req, res) => {
+      const purchaseData = req.body;
+      // Insert purchase details into purchasesCollection
+      const insertPurchaseResult = await purchasesCollection.insertOne(
+        purchaseData
+      );
+
+      const purchaseId = insertPurchaseResult.insertedId;
+      const { itemName, itemCategory, branchName } = purchaseData;
+      // Update product details in storeCollection
+      const options = { upsert: true };
+      const updateProductDetails = await storeCollection.updateOne(
+        { itemName, itemCategory, branchName },
+        {
+          $set: {
+            itemName,
+            itemCategory,
+            branchName,
+            purchaseDate: purchaseData.purchaseDate,
+            itemPrice: purchaseData.itemPrice,
+            itemQuantity: purchaseData.itemQuantity,
+            voucherNo: purchaseData.voucherNo,
+          },
+        },
+        options
+      );
+      res.send(updateProductDetails);
+    });
+
+    // app.get("/addItem/:branchName", async (req, res) => {
+    //   const branchName = req.params.branchName;
+    //   const query = { branchName: branchName };
+    //   const result = await itemsCollection
+    //     .find(query)
+    //     .sort({ createdAt: -1 })
+    //     .toArray();
+    //   res.send(result);
+    // });
+
+    app.get("/purchase/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await purchasesCollection
+        .find(query)
+        .sort({ purchaseData: -1 })
+        .toArray();
       res.send(result);
     });
 
