@@ -80,6 +80,7 @@ async function run() {
     // post purchase data and update store collection
     app.post("/purchase", async (req, res) => {
       const purchaseData = req.body;
+      purchaseData.createdAt = new Date();
       // Insert purchase details into purchasesCollection
       const insertPurchaseResult = await purchasesCollection.insertOne(
         purchaseData
@@ -107,22 +108,24 @@ async function run() {
       res.send(updateProductDetails);
     });
 
-    // app.get("/addItem/:branchName", async (req, res) => {
-    //   const branchName = req.params.branchName;
-    //   const query = { branchName: branchName };
-    //   const result = await itemsCollection
-    //     .find(query)
-    //     .sort({ createdAt: -1 })
-    //     .toArray();
-    //   res.send(result);
-    // });
-
+    // all purchased items date wise
     app.get("/purchase/:branchName", async (req, res) => {
       const branchName = req.params.branchName;
       const query = { branchName: branchName };
       const result = await purchasesCollection
         .find(query)
-        .sort({ purchaseData: -1 })
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
+
+    // all stored item itemName names wise.
+    app.get("/store/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await storeCollection
+        .find(query)
+        .sort({ itemName: 1 })
         .toArray();
       res.send(result);
     });
