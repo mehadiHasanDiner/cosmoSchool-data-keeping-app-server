@@ -111,7 +111,21 @@ async function run() {
       );
 
       const purchaseId = insertPurchaseResult.insertedId;
-      const { itemName, itemCategory, branchName } = purchaseData;
+      const { itemName, itemCategory, branchName, itemQuantity } = purchaseData;
+
+      // Retrieve current itemQuantity from storeCollection
+      const currentProductDetails = await storeCollection.findOne({
+        itemName,
+        itemCategory,
+        branchName,
+        itemQuantity,
+      });
+
+      // Calculate new itemQuantity
+      const newItemQuantity = currentProductDetails
+        ? currentProductDetails.itemQuantity + itemQuantity
+        : itemQuantity;
+
       // Update product details in storeCollection
       const options = { upsert: true };
       const updateProductDetails = await storeCollection.updateOne(
@@ -122,10 +136,10 @@ async function run() {
             itemCategory,
             branchName,
             purchaseDate: purchaseData.purchaseDate,
-            itemPrice: purchaseData.itemPrice,
-            itemQuantity: purchaseData.itemQuantity,
             voucherNo: purchaseData.voucherNo,
           },
+          // Update itemQuantity by adding it to the previous quantity
+          $inc: { itemQuantity: itemQuantity },
         },
         options
       );
