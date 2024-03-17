@@ -77,6 +77,30 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/addEmployee/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await employeesCollection
+        .find(query)
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
+
+    // load specific item (but not taking all of the specific service)
+    app.get("/employeeExpenseDetails/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      const options = {
+        // Include only the `title` and `imdb` fields in each returned document
+        projection: { employeeName: 1, designation: 1, branchName: 1 },
+      };
+
+      const result = await employeesCollection.findOne(query, options);
+      res.send(result);
+    });
+
     // post purchase data and update store collection
     app.post("/purchase", async (req, res) => {
       const purchaseData = req.body;
