@@ -39,6 +39,10 @@ async function run() {
 
     const storeCollection = client.db("cosmoSchoolDB").collection("store");
 
+    const employeesExpenseCollection = client
+      .db("cosmoSchoolDB")
+      .collection("expenseCollection");
+
     app.post("/addItem", async (req, res) => {
       const content = req.body;
       content.createdAt = new Date();
@@ -165,6 +169,24 @@ async function run() {
         .find(query)
         .sort({ itemName: 1 })
         .toArray();
+      res.send(result);
+    });
+
+    // update store when take items
+    app.put("/takeFromStore/:itemId", async (req, res) => {
+      const itemId = req.params.itemId;
+      const { quantity } = req.body;
+      const result = await storeCollection.updateOne(
+        { _id: new ObjectId(itemId) },
+        { $inc: { itemQuantity: -quantity } }
+      );
+      res.send(result);
+    });
+
+    // save user expense data
+    app.post("/employeeExpense", async (req, res) => {
+      const expenseData = req.body;
+      const result = await employeesExpenseCollection.insertOne(expenseData);
       res.send(result);
     });
 
