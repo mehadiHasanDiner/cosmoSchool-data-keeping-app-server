@@ -41,7 +41,11 @@ async function run() {
 
     const employeesExpenseCollection = client
       .db("cosmoSchoolDB")
-      .collection("expenseCollection");
+      .collection("employeeExpense");
+
+    const employeesReturnCollection = client
+      .db("cosmoSchoolDB")
+      .collection("employeeReturned");
 
     app.post("/addItem", async (req, res) => {
       const content = req.body;
@@ -183,10 +187,28 @@ async function run() {
       res.send(result);
     });
 
+    // update store when back any items
+    app.put("/giveToStore/:itemId", async (req, res) => {
+      const itemId = req.params.itemId;
+      const { quantity } = req.body;
+      const result = await storeCollection.updateOne(
+        { _id: new ObjectId(itemId) },
+        { $inc: { itemQuantity: +quantity } }
+      );
+      res.send(result);
+    });
+
     // save user expense data
     app.post("/employeeExpense", async (req, res) => {
       const expenseData = req.body;
       const result = await employeesExpenseCollection.insertOne(expenseData);
+      res.send(result);
+    });
+
+    // save if user return item
+    app.post("/employeeBack", async (req, res) => {
+      const returnItemData = req.body;
+      const result = await employeesReturnCollection.insertOne(returnItemData);
       res.send(result);
     });
 
