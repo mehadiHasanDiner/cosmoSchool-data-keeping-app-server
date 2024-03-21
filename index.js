@@ -201,14 +201,38 @@ async function run() {
     // save user expense data
     app.post("/employeeExpense", async (req, res) => {
       const expenseData = req.body;
+      expenseData.createdAt = new Date();
       const result = await employeesExpenseCollection.insertOne(expenseData);
       res.send(result);
     });
 
     // save if user return item
-    app.post("/employeeBack", async (req, res) => {
+    app.post("/employeeReturned", async (req, res) => {
       const returnItemData = req.body;
+      returnItemData.createdAt = new Date();
       const result = await employeesReturnCollection.insertOne(returnItemData);
+      res.send(result);
+    });
+
+    // get all employee expense item.
+    app.get("/employeeExpense/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await employeesExpenseCollection
+        .find(query)
+        .sort({ itemName: 1 })
+        .toArray();
+      res.send(result);
+    });
+
+    // get all employee returned item.
+    app.get("/employeeReturned/:branchName", async (req, res) => {
+      const branchName = req.params.branchName;
+      const query = { branchName: branchName };
+      const result = await employeesReturnCollection
+        .find(query)
+        .sort({ itemName: 1 })
+        .toArray();
       res.send(result);
     });
 
