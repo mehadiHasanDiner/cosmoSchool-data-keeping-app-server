@@ -176,6 +176,27 @@ async function run() {
       res.send(result);
     });
 
+    // // update store when take items
+    // app.put("/takeFromStore/:itemId", async (req, res) => {
+    //   const itemId = req.params.itemId;
+    //   const { quantity } = req.body;
+    //   const parsedQuantity = parseInt(quantity);
+    //   if (isNaN(parsedQuantity)) {
+    //     return res.status(400).send("Invalid quantity");
+    //   }
+    //   const result = await storeCollection.findOneAndUpdate(
+    //     { _id: new ObjectId(itemId), itemQuantity: { $type: "number" } }, // Check if itemQuantity is a number
+    //     { $inc: { itemQuantity: -parsedQuantity } },
+    //     { returnOriginal: false } // Ensure updated document is returned
+    //   );
+    //   if (!result.value) {
+    //     return res
+    //       .status(404)
+    //       .send("Item not found or quantity is not a number");
+    //   }
+    //   res.send(result.value);
+    // });
+
     // update store when take items
     app.put("/takeFromStore/:itemId", async (req, res) => {
       const itemId = req.params.itemId;
