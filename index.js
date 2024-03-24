@@ -215,7 +215,7 @@ async function run() {
     });
 
     // get all employee expense item.
-    app.get("/employeeExpense/:branchName", async (req, res) => {
+    app.get("/employeeExpense/:branchName", async  (req, res) => {
       const branchName = req.params.branchName;
       const query = { branchName: branchName };
       const result = await employeesExpenseCollection
