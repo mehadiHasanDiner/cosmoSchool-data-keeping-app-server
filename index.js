@@ -64,6 +64,15 @@ async function run() {
       res.send(result);
     });
 
+    // for deleting data of an item of a logged in user
+    app.delete("/addItem/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await itemsCollection.deleteOne(query);
+      // console.log(result);
+      res.send(result);
+    });
+
     // load specific item (but not taking all of the specific service)
     app.get("/addpurchase/:id", async (req, res) => {
       const id = req.params.id;
@@ -92,6 +101,15 @@ async function run() {
         .find(query)
         .sort({ createdAt: -1 })
         .toArray();
+      res.send(result);
+    });
+
+    // for deleting data of an item of a logged in user
+    app.delete("/addEmployee/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await employeesCollection.deleteOne(query);
+      // console.log(result);
       res.send(result);
     });
 
@@ -162,6 +180,31 @@ async function run() {
         .find(query)
         .sort({ createdAt: -1 })
         .toArray();
+      res.send(result);
+    });
+
+    // for getting purchase item data by searching
+    app.get("/purchasedItem/:branchName/:text", async (req, res) => {
+      const branchName = req.params.branchName;
+      const searchText = req.params.text;
+      const query = {
+        branchName: branchName,
+        $or: [{ itemName: { $regex: searchText, $options: "i" } }],
+      };
+
+      const result = await purchasesCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // for getting purchase item data by searching
+    app.get("/purchasedDate/:branchName/:date", async (req, res) => {
+      const branchName = req.params.branchName;
+      const searchDate = req.params.date;
+      const query = {
+        branchName: branchName,
+        $or: [{ purchaseDate: searchDate }],
+      };
+      const result = await purchasesCollection.find(query).toArray();
       res.send(result);
     });
 
