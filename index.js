@@ -220,7 +220,7 @@ async function run() {
       const query = { branchName: branchName };
       const result = await employeesExpenseCollection
         .find(query)
-        .sort({ itemName: 1 })
+        .sort({ createdAt: -1 })
         .toArray();
       res.send(result);
     });
@@ -231,7 +231,7 @@ async function run() {
       const query = { branchName: branchName };
       const result = await employeesReturnCollection
         .find(query)
-        .sort({ itemName: 1 })
+        .sort({ createdAt: -1 })
         .toArray();
       res.send(result);
     });
