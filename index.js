@@ -183,7 +183,16 @@ async function run() {
       res.send(result);
     });
 
-    // for getting purchase item data by searching
+    // for deleting data of an item from purchase list
+    app.delete("/purchase/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await purchasesCollection.deleteOne(query);
+      // console.log(result);
+      res.send(result);
+    });
+
+    // for getting purchase item name by searching
     app.get("/purchasedItem/:branchName/:text", async (req, res) => {
       const branchName = req.params.branchName;
       const searchText = req.params.text;
@@ -191,7 +200,6 @@ async function run() {
         branchName: branchName,
         $or: [{ itemName: { $regex: searchText, $options: "i" } }],
       };
-
       const result = await purchasesCollection.find(query).toArray();
       res.send(result);
     });
@@ -268,6 +276,18 @@ async function run() {
       res.send(result);
     });
 
+    // for getting purchase item name by searching
+    app.get("/employeeExpenseByName/:branchName/:text", async (req, res) => {
+      const branchName = req.params.branchName;
+      const searchText = req.params.text;
+      const query = {
+        branchName: branchName,
+        $or: [{ employeeName: { $regex: searchText, $options: "i" } }],
+      };
+      const result = await employeesExpenseCollection.find(query).toArray();
+      res.send(result);
+    });
+
     // get all employee returned item.
     app.get("/employeeReturned/:branchName", async (req, res) => {
       const branchName = req.params.branchName;
@@ -276,6 +296,18 @@ async function run() {
         .find(query)
         .sort({ createdAt: -1 })
         .toArray();
+      res.send(result);
+    });
+
+    // for getting purchase item name by searching
+    app.get("/storeItemByName/:branchName/:text", async (req, res) => {
+      const branchName = req.params.branchName;
+      const searchText = req.params.text;
+      const query = {
+        branchName: branchName,
+        $or: [{ itemName: { $regex: searchText, $options: "i" } }],
+      };
+      const result = await storeCollection.find(query).toArray();
       res.send(result);
     });
 
